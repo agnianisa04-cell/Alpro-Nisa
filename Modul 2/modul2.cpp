@@ -21,6 +21,7 @@ int main () {
         cout << "Piala Api menyala! Anda terpilih sebagai Triwizard Champions." << endl;
     }else {
         cout << "Piala Api menolak Anda! Umur terlalu kecil" << endl;
+        return 0;
     } 
     cout <<"\n";
 
@@ -46,6 +47,7 @@ int main () {
         }else {
             cout << "Pilihan tidak valid! Ulangi pilihan." << endl;
         }
+        
 
     }
     cout << "\n";
@@ -75,6 +77,7 @@ int main () {
     if (penanda){
         cout << "Tepat 60 menit anda menyelamatkan sandera.\n" << endl;
     }
+
 
     cout << "--- TUGAS 3: LABIRIN ---" << endl;
     cout << "Sisa toleransi kesalahan : " << sisaToleransiKesalahan << endl;
@@ -137,7 +140,6 @@ int main () {
         for (int j = 1; j <= angka - i; j++) {
             cout << " ";
         }
-        // Cetak bintang
         for (int k = 1; k <= (2 * i - 1); k++) {
             cout << "*";
         }
