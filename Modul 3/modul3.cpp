@@ -106,7 +106,7 @@ int main () {
     cout << "\n";
 
     int baris2 = counterPanjang2 / kolom;
-    cout << "Mtriks deskripsi : " << endl;
+    cout << "Matriks deskripsi : " << endl;
 
     for (int j = 0; j < 4; j++){
         for (int i = 0; i < baris2; i++){
@@ -135,7 +135,7 @@ int main () {
     }
     cout << endl;
 
-    cout << endl << ">> [TASK 2/3] COMPLETE - Text console back online." << endl;
+    cout << endl << ">> [TASK 1/3] COMPLETE - Signal chanel restored." << endl;
     cout << ">> Tekan ENTER untuk keluar.";
     cin.ignore();
     cin.get();
@@ -209,15 +209,18 @@ int main () {
                 char charDepan = tanpaSpasi[i];
                 char charBelakang = tanpaSpasi[len - 1 - i];
 
-                if (charDepan >= 'A' && charDepan <= 'Z') charDepan += 32;
-                if (charBelakang >= 'A' && charBelakang <= 'Z') charBelakang += 32;
-
+                if (charDepan >= 'A' && charDepan <= 'Z'){
+                    charDepan += 32;
+                }
+                if (charBelakang >= 'A' && charBelakang <= 'Z'){
+                    charBelakang += 32;
+                } 
                 if (charDepan != charBelakang) {
                     isPalindrome = false;
                     break;
                 }
             }
-            cout << "4. Palindrome?     : " << (isPalindrome && len > 0 ? "YES" : "NO") << endl;
+            cout << "4. Palindrome?     : ";
             if (isPalindrome && len > 0){
                 cout << "YES" << endl;
             }else {
