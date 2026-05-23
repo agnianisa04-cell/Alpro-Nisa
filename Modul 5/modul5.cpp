@@ -153,7 +153,15 @@ bool daftarPasien(Data pasien[], int jumlahPasien, Tanggal_lahir hariIni){
             break;
         }
     }
-    pasien[jumlahPasien].tanggalMasuk = hariIni;
+    cout << "Tanggal Masuk        : " << endl;
+    cout << "    Tanggal          : ";
+    cin >> pasien[jumlahPasien].tanggalMasuk.tanggal;
+
+    cout << "    Bulan            : ";
+    cin >> pasien[jumlahPasien].tanggalMasuk.bulan;
+
+    cout << "    Tahun            : ";
+    cin >> pasien[jumlahPasien].tanggalMasuk.tahun;
     return true;
 }
 
@@ -240,6 +248,9 @@ void cariPasien(Data pasien[], int jumlahPasien){
         cout << "\nPasien tidak ditemukan..." << endl;
     }
 }
+int hitungHari(Tanggal_lahir t){
+    return t.tahun * 365 + t.bulan * 30 + t.tanggal;
+}
 
 void pulangkanPasien(Data pasien[], int &jumlahPasien){
     if (jumlahPasien == 0){
@@ -268,7 +279,7 @@ void pulangkanPasien(Data pasien[], int &jumlahPasien){
 
     int index = id - 1;
     int tanggalKeluar = 21;
-    int lamaRawat = tanggalKeluar - pasien[index].tanggalMasuk.tanggal;
+    int lamaRawat = hitungHari(tanggalSekarang) - hitungHari(pasien[index].tanggalMasuk);
     int tarif = 75000;
     int total = lamaRawat * tarif;
 
@@ -279,12 +290,15 @@ void pulangkanPasien(Data pasien[], int &jumlahPasien){
     cout << "Nama           : " << pasien[index].nama << endl;
     cout << "NIK            : " << pasien[index].nik << endl;
     cout << "BPJS           : " << pasien[index].bpjs << endl;
-
+    
     cout << "Tanggal Masuk  : " << pasien[index].tanggalMasuk.tanggal << "/" << pasien[index].tanggalMasuk.bulan << "/" << pasien[index].tanggalMasuk.tahun<< endl;
-    cout << "Tanggal Keluar : 21/5/2026" << endl;
+    cout << "Tanggal Keluar : " << tanggalSekarang.tanggal << "/" << tanggalSekarang.bulan << "/" << tanggalSekarang.tahun << endl;
+    if (lamaRawat <= 0){
+    lamaRawat = 1;
+    }
     cout << "Lama Rawat     : " << lamaRawat << " hari" << endl;
     cout << "Tarif per Hari : Rp 75000" << endl;
-
+    
     if (pasien[index].bpjs == 'y' || pasien[index].bpjs == 'Y'){
         total = 0;
         cout << "Total Tagihan  : Rp " << total << " (Ditanggung BPJS)" << endl;
@@ -316,7 +330,10 @@ int main () {
     while(true){
         menuUtama(tanggalSekarang);
         cin >> pilih;
-        if (pilih == 1){
+        if (cin.fail()){
+            inputTidakValid();
+            cout << "[!] Input harus berupa angka..." << endl;
+        }else if (pilih == 1){
             if (daftarPasien(p, urutan, tanggalSekarang)){
                 urutanPasien[urutan] = urutan + 1;
                 cout << "[OK] Pasien ID-" << urutanPasien[urutan] << " berhasil didaftarkan!" << endl;
