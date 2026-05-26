@@ -40,7 +40,7 @@ void menuUtama (Tanggal_lahir hariIni){
     cout << "======================================================" << endl;
     cout << "\tSISTEM MANAJEMEN RS GAZACARE PLUS" << endl;
     cout << "======================================================" << endl;
-    cout << "\t\tTanggal: " << hariIni.tanggal << "/" << hariIni.bulan << "/" << hariIni.tahun << endl;
+    cout << "\t\t\t\tTanggal: " << hariIni.tanggal << "/" << hariIni.bulan << "/" << hariIni.tahun << endl;
     cout << "[1] Daftarkan Pasien Baru" << endl;
     cout << "[2] Lihat Semua Pasien" << endl;
     cout << "[3] Cari Pasien" << endl;
@@ -174,6 +174,7 @@ void lihatPasien(Data pasien[], int jumlahPasien){
     }
 
     for(int i = 0; i < jumlahPasien; i++){
+        cout << "\t\t\t\tTanggal Masuk  : " << pasien[i].tanggalMasuk.tanggal << "/" << pasien[i].tanggalMasuk.bulan << "/" << pasien[i].tanggalMasuk.tahun<< endl;
         cout << "\nID              : " << i + 1 << endl;
         cout << "NIK             : " << pasien[i].nik << endl;
         cout << "Nama            : " << pasien[i].nama << endl;
@@ -197,12 +198,14 @@ void lihatPasien(Data pasien[], int jumlahPasien){
             cout << "Alergi          : " << endl;
             cout << pasien[i].alergen << " -> " << pasien[i].reaksi << endl;
         }
+        cout << "-----------------------------------" << endl;
     }
 }
 
 void cariPasien(Data pasien[], int jumlahPasien){
     string cariNama;
     bool ditemukan = false;
+    int identity[] = {1, 2, 3, 4, 5, 6};
 
     cout << "\n=======================================" << endl;
     cout << "\tCARI PASIEN" << endl;
@@ -213,11 +216,11 @@ void cariPasien(Data pasien[], int jumlahPasien){
     cout << "\n=======================================" << endl;
     cout << "\tDAFTAR PASIEN" << endl;
     cout << "=======================================" << endl;
-
     for(int i = 0; i < jumlahPasien; i++){
         if (pasien[i].nama == cariNama){
+            cout << "\t\t\t\tTanggal Masuk  : " << pasien[i].tanggalMasuk.tanggal << "/" << pasien[i].tanggalMasuk.bulan << "/" << pasien[i].tanggalMasuk.tahun<< endl;
             ditemukan = true;
-            cout << "\nID              : " << i + 1 << endl;
+            cout << "\nID              : " << identity[i] << endl;
             cout << "NIK             : " << pasien[i].nik << endl;
             cout << "Nama            : " << pasien[i].nama << endl;
             cout << "Jenis Kelamin   : " << pasien[i].jenisKelamin << endl;
@@ -257,7 +260,7 @@ void pulangkanPasien(Data pasien[], int &jumlahPasien){
         cout << "\nTidak ada pasien terdaftar..." << endl;
         return;
     }
-
+    int identity[] = {1, 2, 3, 4, 5, 6};
     int id;
     char konfirmasi;
 
@@ -266,7 +269,8 @@ void pulangkanPasien(Data pasien[], int &jumlahPasien){
     cout << "=======================================" << endl;
 
     for (int i = 0; i < jumlahPasien; i++){
-        cout << "ID-" << i + 1 << " | " << pasien[i].nama << endl;
+        identity[i] = identity[i + 1];
+        cout << "ID-" << identity[i] << " | " << pasien[i].nama << endl;
     }
 
     cout << "\nMasukkan ID pasien yang ingin dipulangkan: ";
@@ -281,7 +285,6 @@ void pulangkanPasien(Data pasien[], int &jumlahPasien){
     int tanggalKeluar = 21;
     int lamaRawat = hitungHari(tanggalSekarang) - hitungHari(pasien[index].tanggalMasuk);
     int tarif = 75000;
-    int total = lamaRawat * tarif;
 
     cout << "\n=======================================" << endl;
     cout << "\tRINCIAN TAGIHAN" << endl;
@@ -296,6 +299,7 @@ void pulangkanPasien(Data pasien[], int &jumlahPasien){
     if (lamaRawat <= 0){
     lamaRawat = 1;
     }
+    int total = lamaRawat * tarif;
     cout << "Lama Rawat     : " << lamaRawat << " hari" << endl;
     cout << "Tarif per Hari : Rp 75000" << endl;
     
