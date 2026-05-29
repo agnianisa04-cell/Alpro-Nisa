@@ -21,6 +21,7 @@ struct Alamat{
 };
 
 struct Data{
+    int id;
     char nik[100];
     string nama;
     Tanggal_lahir tanggal;
@@ -37,7 +38,7 @@ struct Data{
 Tanggal_lahir tanggalSekarang = {21, 5, 2026};
 
 void menuUtama (Tanggal_lahir hariIni){
-    cout << "======================================================" << endl;
+    cout << "\n======================================================" << endl;
     cout << "\tSISTEM MANAJEMEN RS GAZACARE PLUS" << endl;
     cout << "======================================================" << endl;
     cout << "\t\t\t\tTanggal: " << hariIni.tanggal << "/" << hariIni.bulan << "/" << hariIni.tahun << endl;
@@ -61,7 +62,8 @@ bool cekNikSama(char nik1[], char nik2[]){
     return true;
 }
 
-bool daftarPasien(Data pasien[], int jumlahPasien, Tanggal_lahir hariIni){
+bool daftarPasien(Data pasien[], int jumlahPasien, Tanggal_lahir hariIni, int nextId){
+    pasien[jumlahPasien].id = nextId;
     string alergen, reaksi;
     int urutanPasien[100];
     int urutan = 0;
@@ -175,7 +177,7 @@ void lihatPasien(Data pasien[], int jumlahPasien){
 
     for(int i = 0; i < jumlahPasien; i++){
         cout << "\t\t\t\tTanggal Masuk  : " << pasien[i].tanggalMasuk.tanggal << "/" << pasien[i].tanggalMasuk.bulan << "/" << pasien[i].tanggalMasuk.tahun<< endl;
-        cout << "\nID              : " << i + 1 << endl;
+        cout << "\nID              : " << pasien[i].id << endl;
         cout << "NIK             : " << pasien[i].nik << endl;
         cout << "Nama            : " << pasien[i].nama << endl;
         cout << "Jenis Kelamin   : " << pasien[i].jenisKelamin << endl;
@@ -205,7 +207,6 @@ void lihatPasien(Data pasien[], int jumlahPasien){
 void cariPasien(Data pasien[], int jumlahPasien){
     string cariNama;
     bool ditemukan = false;
-    int identity[] = {1, 2, 3, 4, 5, 6};
 
     cout << "\n=======================================" << endl;
     cout << "\tCARI PASIEN" << endl;
@@ -220,7 +221,7 @@ void cariPasien(Data pasien[], int jumlahPasien){
         if (pasien[i].nama == cariNama){
             cout << "\t\t\t\tTanggal Masuk  : " << pasien[i].tanggalMasuk.tanggal << "/" << pasien[i].tanggalMasuk.bulan << "/" << pasien[i].tanggalMasuk.tahun<< endl;
             ditemukan = true;
-            cout << "\nID              : " << identity[i] << endl;
+            cout << "\nID              : " << pasien[i].id << endl;
             cout << "NIK             : " << pasien[i].nik << endl;
             cout << "Nama            : " << pasien[i].nama << endl;
             cout << "Jenis Kelamin   : " << pasien[i].jenisKelamin << endl;
@@ -260,7 +261,6 @@ void pulangkanPasien(Data pasien[], int &jumlahPasien){
         cout << "\nTidak ada pasien terdaftar..." << endl;
         return;
     }
-    int identity[] = {1, 2, 3, 4, 5, 6};
     int id;
     char konfirmasi;
 
@@ -269,19 +269,25 @@ void pulangkanPasien(Data pasien[], int &jumlahPasien){
     cout << "=======================================" << endl;
 
     for (int i = 0; i < jumlahPasien; i++){
-        identity[i] = identity[i + 1];
-        cout << "ID-" << identity[i] << " | " << pasien[i].nama << endl;
+        cout << "ID-" << pasien[i].id << " | " << pasien[i].nama << endl;
     }
 
     cout << "\nMasukkan ID pasien yang ingin dipulangkan: ";
     cin >> id;
 
-    if (id <= 0 || id > jumlahPasien){
+    int index = -1;
+    for (int i = 0; i < jumlahPasien; i++){
+        if (pasien[i].id == id){
+            index = i;
+            break;
+        }
+    }
+
+    if (index == -1){
         cout << "\n[!] ID-" << id << " tidak ditemukan" << endl;
         return;
     }
-
-    int index = id - 1;
+    
     int tanggalKeluar = 21;
     int lamaRawat = hitungHari(tanggalSekarang) - hitungHari(pasien[index].tanggalMasuk);
     int tarif = 75000;
@@ -330,6 +336,7 @@ int main () {
     int pilih;
     int urutanPasien[100];
     int urutan = 0;
+    int nextId = 1;
 
     while(true){
         menuUtama(tanggalSekarang);
@@ -338,9 +345,10 @@ int main () {
             inputTidakValid();
             cout << "[!] Input harus berupa angka..." << endl;
         }else if (pilih == 1){
-            if (daftarPasien(p, urutan, tanggalSekarang)){
+            if (daftarPasien(p, urutan, tanggalSekarang, nextId)){
                 urutanPasien[urutan] = urutan + 1;
-                cout << "[OK] Pasien ID-" << urutanPasien[urutan] << " berhasil didaftarkan!" << endl;
+                cout << "[OK] Pasien ID-" << p[urutan].id << " berhasil didaftarkan!" << endl;
+                nextId++;
                 urutan++;
             }
         }else if (pilih == 2){
