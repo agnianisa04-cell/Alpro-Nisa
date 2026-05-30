@@ -1,1 +1,2 @@
-salah tulis itu bang yg modul 3
+Saya masukin trialnya ke folder modul 6 bg
+
