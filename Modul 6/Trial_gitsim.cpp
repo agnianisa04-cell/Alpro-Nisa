@@ -16,6 +16,8 @@ void tampilHeader(string username){
 
 struct Branch{
     string nama;
+    int jumlahCommit;
+
 };
 
 struct Repository{
@@ -33,6 +35,8 @@ struct Commit{
 
 Commit daftarCommit[100];
 int totalCommit = 0;
+Branch daftarBranch[100];
+int totalBranch = 1;
 
 string buatHash(int nomorCommit){
     const string karakter = "0123456789abcdef";
@@ -73,7 +77,7 @@ void tampilanUtama(string username, Repository* repo){
     cout << COLOR_CYAN << "> " << COLOR_RESET;
 }
 
-void gitCommit(string username, Repository* repo, Commit daftarCommit[], int &totalCommit){
+void gitCommit(string username, Repository* repo, Commit daftarCommit[], int &totalCommit, Branch daftarBranch[], int totalBranch){
     string pesan;
     char konfirmasi;
 
@@ -95,6 +99,11 @@ void gitCommit(string username, Repository* repo, Commit daftarCommit[], int &to
         daftarCommit[totalCommit].hash = buatHash(totalCommit);
         daftarCommit[totalCommit].waktu = ambilWaktu();
         daftarCommit[totalCommit].branch = (*repo).branchAktif;
+        for(int i = 0; i < totalBranch; i++){
+            if(daftarBranch[i].nama == (*repo).branchAktif){
+                daftarBranch[i].jumlahCommit++;
+            }
+        }
         cout << endl;
 
         cout << "[" << COLOR_GREEN << (*repo).branchAktif << " " << daftarCommit[totalCommit].hash << COLOR_RESET << "] " << daftarCommit[totalCommit].pesan << endl;
@@ -128,6 +137,128 @@ void gitLog(Repository* repo, Commit daftarCommit[], int totalCommit){
     if(!adaCommit){
         cout << "(No commits on this branch)" << endl;
     }
+    cout << "\nPress Enter...";
+    cin.get();
+}
+
+int hitungCommitBranch(string namaBranch, Commit daftarCommit[], int totalCommit){
+    int jumlah = 0;
+    for(int i = 0; i < totalCommit; i++){
+        if(daftarCommit[i].branch == namaBranch){
+            jumlah++;
+        }
+    }
+    return jumlah;
+}
+
+void gitBranch(Repository* repo, Branch daftarBranch[], int &totalBranch, Commit daftarCommit[], int &totalCommit){
+    cout << "----------------------------------------" << endl;
+    cout << "git branch" << endl;
+    cout << "----------------------------------------" << endl;
+    for(int i = 0; i < totalBranch; i++){
+        if(daftarBranch[i].nama == (*repo).branchAktif){
+            cout << COLOR_GREEN << "* " << daftarBranch[i].nama << COLOR_RESET << " (" << hitungCommitBranch(daftarBranch[i].nama, daftarCommit, totalCommit)
+                 << " commits)"
+                 << endl;
+        }else{
+            cout << daftarBranch[i].nama << " (" << hitungCommitBranch(daftarBranch[i].nama, daftarCommit, totalCommit)
+                 << " commits)"
+                 << endl;
+        }
+    }
+    cout << "----------------------------------------" << endl;
+    string namaBaru;
+
+    cout << "New branch name: ";
+    cin.ignore();
+    getline(cin, namaBaru);
+
+    if(namaBaru == ""){
+        cout << endl;
+        cout << "[ERROR] Branch name cannot be empty!" << endl;
+
+        cout << "\nPress Enter...";
+        cin.get();
+        return;
+    }
+
+    for(int i = 0; i < totalBranch; i++){
+        if(daftarBranch[i].nama == namaBaru){
+            cout << endl;
+            cout << "[ERROR] Branch '" << namaBaru << "' already exists!" << endl;
+            cout << "\nPress Enter...";
+            cin.get();
+            return;
+        }
+    }
+
+    int commitDiwariskan = 0;
+    for(int i = 0; i < totalCommit; i++){
+        if(daftarCommit[i].branch == (*repo).branchAktif){
+
+            daftarCommit[totalCommit] = daftarCommit[i];
+
+            // ubah branch commit hasil salinan
+            daftarCommit[totalCommit].branch = namaBaru;
+
+            totalCommit++;
+            commitDiwariskan++;
+        }
+    }
+
+    daftarBranch[totalBranch].nama = namaBaru;
+    daftarBranch[totalBranch].jumlahCommit = commitDiwariskan;
+
+    totalBranch++;
+    cout << endl;
+
+    cout << COLOR_GREEN << "[OK]" << COLOR_RESET << " Branch '" << namaBaru << "' created from '" << (*repo).branchAktif << "'" << endl;
+    cout << commitDiwariskan << " commit(s) inherited" << endl;
+    cout << "\nPress Enter...";
+    cin.get();
+}
+
+void gitCheckout(Repository* repo, Branch daftarBranch[], int totalBranch){
+    cout << "----------------------------------------" << endl;
+    cout << "git checkout" << endl;
+    cout << "----------------------------------------" << endl;
+    for(int i = 0; i < totalBranch; i++){
+        if(daftarBranch[i].nama == (*repo).branchAktif){
+            cout << COLOR_GREEN << "* " << daftarBranch[i].nama << COLOR_RESET << endl;
+        }else{
+            cout << "  " << daftarBranch[i].nama << endl;
+        }
+    }
+    cout << "----------------------------------------" << endl;
+    string tujuan;
+
+    cout << "Switch to branch: ";
+    cin.ignore();
+    getline(cin, tujuan);
+
+    bool ditemukan = false;
+    for(int i = 0; i < totalBranch; i++){
+        if(daftarBranch[i].nama == tujuan){
+            ditemukan = true;
+            if(tujuan == (*repo).branchAktif){
+                cout << endl;
+                cout << "[ERROR] Invalid branch!" << endl;
+
+                cout << "\nPress Enter...";
+                cin.get();
+                return;
+            }
+            (*repo).branchAktif = tujuan;
+            cout << endl;
+            cout << COLOR_GREEN << "[OK]" << COLOR_RESET << " Switched to branch '" << tujuan << "'" << endl;
+            cout << "\nPress Enter...";
+            cin.get();
+            return;
+        }
+    }
+    cout << endl;
+    cout << "[ERROR] Invalid branch!" << endl;
+
     cout << "\nPress Enter...";
     cin.get();
 }
@@ -168,6 +299,8 @@ int main(int argc, char** argv){
     Repository* ptrRepo = &repo;
     (*ptrRepo).nama = repoName;
     (*ptrRepo).branchAktif = "main";
+    daftarBranch[0].nama = "main";
+    daftarBranch[0].jumlahCommit = 0;
 
     int pilih;
     while(true){
@@ -180,15 +313,17 @@ int main(int argc, char** argv){
             cin.ignore(1000, '\n');
         }else if(pilih == 1){
             tampilHeader(username);
-            gitCommit(username, ptrRepo, daftarCommit, totalCommit);
+            gitCommit(username, ptrRepo, daftarCommit, totalCommit, daftarBranch, totalBranch);
         }else if(pilih == 2){
             cin.ignore();
             tampilHeader(username);
             gitLog(ptrRepo, daftarCommit, totalCommit);
         }else if(pilih == 3){
-            // git branch
+            tampilHeader(username);
+            gitBranch(ptrRepo, daftarBranch, totalBranch, daftarCommit, totalCommit);
         }else if(pilih == 4){
-            // git checkout
+            tampilHeader(username);
+            gitCheckout(ptrRepo, daftarBranch, totalBranch);
         }else if (pilih == 5){
             // new repository
         }else if(pilih == 6){
